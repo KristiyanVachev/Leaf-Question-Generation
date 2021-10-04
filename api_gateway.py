@@ -2,6 +2,8 @@ from flask import Flask, request
 from flask_cors import CORS, cross_origin
 import json
 
+from app.models.question import Question
+
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
@@ -29,8 +31,11 @@ def generate():
         count = int(requestJson['count'])
 
     #TODO use the real stuff here
+    questions = [Question("Koala", "Which is the cutest animal?", ['Panda', 'Gorrila', 'Dolphin'])]
 
-    return json.dumps(None)
+    result = list(map(lambda x: json.dumps(x.__dict__), questions))
+
+    return json.dumps(result)
     # return json.dumps(questions)
 
 
