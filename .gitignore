@@ -1,0 +1,17 @@
+/.idea
+
+/venv
+
+/data/embeddings/glove.6B.300d.txt
+/data/embeddings/word2vec-glove.6B.300d.txt
+/data/pickles
+/data/questionanswer-dataset
+/data/squad-v1/dev-v1.1.json
+/data/squad-v1/train-v1.1.json
+
+
+
+__pycache__
+
+pickles
+.ipynb_checkpoints
