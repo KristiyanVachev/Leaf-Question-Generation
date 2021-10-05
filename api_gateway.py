@@ -3,6 +3,7 @@ from flask_cors import CORS, cross_origin
 import json
 
 from app.models.question import Question
+from app.question_generation import QuestionGenerator
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -30,8 +31,15 @@ def generate():
     else:
         count = int(requestJson['count'])
 
-    #TODO use the real stuff here
-    questions = [Question("Koala", "Which is the cutest animal?", ['Panda', 'Gorrila', 'Dolphin'])]
+    question_generator = QuestionGenerator()
+    input_answer = '[MASK]'
+    generated = question_generator.generate(input_answer, text)
+
+    answer, question = generated.split('<sep>')
+
+    questions = [
+        Question(answer, question, [])
+        ]
 
     result = list(map(lambda x: json.dumps(x.__dict__), questions))
 
