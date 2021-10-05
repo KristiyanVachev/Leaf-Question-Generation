@@ -67,7 +67,7 @@ class QGModel(pl.LightningModule):
 
 class QuestionGenerator():
     def __init__(self):
-        self.tokenizer = T5Tokenizer.from_pretrained(MODEL_NAME).add_tokens(SEP_TOKEN)
+        self.tokenizer = T5Tokenizer.from_pretrained(MODEL_NAME)
         # print('tokenizer len before: ', len(self.tokenizer))
         self.tokenizer.add_tokens(SEP_TOKEN)
         # print('tokenizer len after: ', len(self.tokenizer))
