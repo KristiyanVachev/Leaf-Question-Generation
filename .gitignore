@@ -2,7 +2,9 @@
 
 /venv
 
-app/data/
+app/ml_models/answer_generation/checkpoints
+app/ml_models/question_generation/checkpoints
+app/ml_models/distractor_generation/checkpoints
 
 __pycache__
 

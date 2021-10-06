@@ -1,5 +1,5 @@
-from logging import NullHandler
-from typing import List, Dict, Tuple
+# Import packages
+from typing import List, Dict
 import tqdm.notebook as tq
 from tqdm.notebook import tqdm
 import json
@@ -21,12 +21,12 @@ from transformers import (
 # Constants
 MODEL_NAME = 't5-small'
 LEARNING_RATE = 0.0001
-SOURCE_MAX_TOKEN_LEN = 300
-TARGET_MAX_TOKEN_LEN = 80
+SOURCE_MAX_TOKEN_LEN = 512
+TARGET_MAX_TOKEN_LEN = 64
 SEP_TOKEN = '<sep>'
 TOKENIZER_LEN = 32101 #after adding the new <sep> token
 
-# QG Model
+# Model
 class QGModel(pl.LightningModule):
     def __init__(self):
         super().__init__()
@@ -65,7 +65,7 @@ class QGModel(pl.LightningModule):
         return AdamW(self.parameters(), lr=LEARNING_RATE)
 
 
-class QuestionGenerator():
+class DistractorGenerator():
     def __init__(self):
         self.tokenizer = T5Tokenizer.from_pretrained(MODEL_NAME)
         # print('tokenizer len before: ', len(self.tokenizer))
@@ -73,26 +73,27 @@ class QuestionGenerator():
         # print('tokenizer len after: ', len(self.tokenizer))
         self.tokenizer_len = len(self.tokenizer)
 
-        checkpoint_path = 'app/data/8.4-multitask-qg-ag.ckpt'
-        self.qg_model = QGModel.load_from_checkpoint(checkpoint_path)
-        self.qg_model.freeze()
-        self.qg_model.eval()
+        checkpoint_path = 'app/ml_models/distractor_generation/checkpoints/10.2.0-distractors-no-mask.ckpt'
+        self.dg_model = QGModel.load_from_checkpoint(checkpoint_path)
+        self.dg_model.freeze()
+        self.dg_model.eval()
 
-    def generate(self, answer: str, context: str) -> str:
+    def generate(self, generate_count: int, correct: str, question: str, context: str) -> str:
         source_encoding = self.tokenizer(
-            '{} {} {}'.format(answer, SEP_TOKEN, context),
-            max_length=SOURCE_MAX_TOKEN_LEN,
+            '{} {} {} {} {}'.format(correct, SEP_TOKEN, question, SEP_TOKEN, context),
+            max_length= SOURCE_MAX_TOKEN_LEN,
             padding='max_length',
-            truncation=True,
+            truncation= True,
             return_attention_mask=True,
             add_special_tokens=True,
             return_tensors='pt'
-        )
+            )
 
-        generated_ids = self.qg_model.model.generate(
+        generated_ids = self.dg_model.model.generate(
             input_ids=source_encoding['input_ids'],
             attention_mask=source_encoding['attention_mask'],
-            num_beams=16,
+            num_beams=generate_count,
+            num_return_sequences=generate_count,
             max_length=TARGET_MAX_TOKEN_LEN,
             repetition_penalty=2.5,
             length_penalty=1.0,
@@ -101,7 +102,7 @@ class QuestionGenerator():
         )
 
         preds = {
-            self.tokenizer.decode(generated_id, skip_special_tokens=True, clean_up_tokenization_spaces=True)
+            self.tokenizer.decode(generated_id, skip_special_tokens=False, clean_up_tokenization_spaces=True)
             for generated_id in generated_ids
         }
 

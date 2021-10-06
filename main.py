@@ -1,5 +1,7 @@
+from platform import dist
 import textwrap
-from app.question_generation import *
+from app.ml_models.distractor_generation.distractor_generator import DistractorGenerator
+from app.ml_models.question_generation.question_generator import QuestionGenerator
 
 def show_result(generated: str, answer: str, context:str, original_question: str = ''):
     
@@ -23,7 +25,12 @@ input_answer = '[MASK]'
 
 #TODO 
 question_generator = QuestionGenerator()
-
 generated = question_generator.generate(input_answer, context)
-
+answer, question = generated.split('<sep>')
 show_result(generated, real_answer, context)
+
+# Distractors
+distractor_generator = DistractorGenerator()
+distractors = distractor_generator.generate(1, answer, question, context)
+
+print(distractors)

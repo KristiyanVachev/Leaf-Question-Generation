@@ -3,7 +3,7 @@ from flask_cors import CORS, cross_origin
 import json
 
 from app.models.question import Question
-from app.question_generation import QuestionGenerator
+from app.ml_models.question_generation.question_generator import QuestionGenerator
 
 app = Flask(__name__)
 cors = CORS(app)
