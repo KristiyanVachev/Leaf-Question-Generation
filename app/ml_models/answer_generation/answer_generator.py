@@ -67,6 +67,13 @@ class AnswerGenerator():
         self.ag_model.freeze()
         self.ag_model.eval()
 
+    def generate(self, context: str, generate_count: int) -> List[str]:
+        model_output = self._model_predict(context, generate_count)
+
+        answers = model_output.replace('<pad>', '').split('</s>')[:-1]
+
+        return answers
+
     def _model_predict(self, context: str, generate_count: int) -> str:
         source_encoding = self.tokenizer(
             context,
@@ -97,9 +104,3 @@ class AnswerGenerator():
 
         return ''.join(preds)
 
-    def generate(self, context: str, generate_count: int) -> List[str]:
-        model_output = self._model_predict(context, generate_count)
-
-        answers = model_output.replace('<pad>', '').split('</s>')[:-1]
-
-        return answers

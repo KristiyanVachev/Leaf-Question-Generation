@@ -79,6 +79,13 @@ class QuestionGenerator():
         self.qg_model.eval()
 
     def generate(self, answer: str, context: str) -> str:
+        model_output = self._model_predict(answer, context)
+
+        generated_answer, generated_question = model_output.split('<sep>')
+
+        return generated_question
+
+    def _model_predict(self, answer: str, context: str) -> str:
         source_encoding = self.tokenizer(
             '{} {} {}'.format(answer, SEP_TOKEN, context),
             max_length=SOURCE_MAX_TOKEN_LEN,

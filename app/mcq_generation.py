@@ -9,18 +9,17 @@ def generate(context: str, desired_count: int) -> List[Question]:
     #TODO Clean the text
 
     questions = _generate_answers(context, desired_count)
-
-    for question in questions:
-        print(question.answerText)
-    
-    #TODO Generate questions for those answers
-    # question_generator = QuestionGenerator()
-    # generated = question_generator.generate(answer, context)
-    # answer, question = generated.split('<sep>')
+    questions = _generate_questions(context, questions)
 
     #TODO Generate distractors for those questions and remove duplicates
 
-    return []
+    for question in questions:
+        print('-------------------')
+        print(question.answerText)
+        print(question.questionText)
+        print(question.distractors)
+
+    return questions
 
 def _generate_answers(context: str, desired_count: int) -> List[Question]:
     answer_generator = AnswerGenerator()
@@ -32,5 +31,13 @@ def _generate_answers(context: str, desired_count: int) -> List[Question]:
     questions = []
     for answer in answers:
         questions.append(Question(answer))
+
+    return questions
+
+def _generate_questions(context: str, questions: List[Question]) -> List[Question]:
+    question_generator = QuestionGenerator()
+
+    for question in questions:
+        question.questionText = question_generator.generate(question.answerText, context)
 
     return questions
