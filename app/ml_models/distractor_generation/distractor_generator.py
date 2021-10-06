@@ -78,7 +78,16 @@ class DistractorGenerator():
         self.dg_model.freeze()
         self.dg_model.eval()
 
-    def generate(self, generate_count: int, correct: str, question: str, context: str) -> str:
+    def generate(self, generate_count: int, correct: str, question: str, context: str) -> List[str]:
+        model_output = self._model_predict(1, correct, question, context)
+
+        cleaned_result = model_output.replace('<pad>', '').replace('</s>', '')
+        cleaned_result = self._replace_all_extra_id(cleaned_result)
+        distractors = cleaned_result.split('<sep>')
+
+        return distractors
+
+    def _model_predict(self, generate_count: int, correct: str, question: str, context: str) -> str:
         source_encoding = self.tokenizer(
             '{} {} {} {} {}'.format(correct, SEP_TOKEN, question, SEP_TOKEN, context),
             max_length= SOURCE_MAX_TOKEN_LEN,
@@ -107,3 +116,25 @@ class DistractorGenerator():
         }
 
         return ''.join(preds)
+
+    def _fucking_correct_index_of(self, text:str, substring: str, start_index: int = 0):
+        try:
+            index = text.index(substring, start_index)
+        except ValueError:
+            index = -1
+
+        return index
+
+    def _replace_all_extra_id(self, text: str):
+        new_text = text
+        start_index_of_extra_id = 0
+
+        while (self._fucking_correct_index_of(new_text, '<extra_id_') >= 0):
+            start_index_of_extra_id = self._fucking_correct_index_of(new_text, '<extra_id_', start_index_of_extra_id)
+            end_index_of_extra_id = self._fucking_correct_index_of(new_text, '>', start_index_of_extra_id)
+
+            new_text = new_text[:start_index_of_extra_id] + '<sep>' + new_text[end_index_of_extra_id + 1:]
+
+        return new_text
+
+    

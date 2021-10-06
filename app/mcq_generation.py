@@ -1,5 +1,6 @@
 from typing import List
 from app.ml_models.answer_generation.answer_generator import AnswerGenerator
+from app.ml_models.distractor_generation.distractor_generator import DistractorGenerator
 from app.ml_models.question_generation.question_generator import QuestionGenerator
 from app.models.question import Question
 
@@ -10,9 +11,8 @@ def generate(context: str, desired_count: int) -> List[Question]:
 
     questions = _generate_answers(context, desired_count)
     questions = _generate_questions(context, questions)
-
-    #TODO Generate distractors for those questions and remove duplicates
-
+    questions = _generate_distractors(context, questions)
+    
     for question in questions:
         print('-------------------')
         print(question.answerText)
@@ -39,5 +39,13 @@ def _generate_questions(context: str, questions: List[Question]) -> List[Questio
 
     for question in questions:
         question.questionText = question_generator.generate(question.answerText, context)
+
+    return questions
+
+def _generate_distractors(context: str, questions: List[Question]) -> List[Question]:
+    distractor_generator = DistractorGenerator()
+
+    for question in questions:
+        question.distractors = distractor_generator.generate(5, question.answerText, question.questionText, context)
 
     return questions
