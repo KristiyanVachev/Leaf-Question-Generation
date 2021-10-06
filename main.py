@@ -1,5 +1,6 @@
 from platform import dist
 import textwrap
+from app.ml_models.answer_generation.answer_generator import AnswerGenerator
 from app.ml_models.distractor_generation.distractor_generator import DistractorGenerator
 from app.ml_models.question_generation.question_generator import QuestionGenerator
 
@@ -23,9 +24,16 @@ context = '''The koala or, inaccurately, koala bear[a] (Phascolarctos cinereus),
 real_answer = 'Koala'
 input_answer = '[MASK]'
 
-#TODO 
+# Answers
+answer_generator = AnswerGenerator()
+answer = answer_generator.generate(context)
+print('Answer:')
+print(answer)
+print('-----')
+
+# Questions
 question_generator = QuestionGenerator()
-generated = question_generator.generate(input_answer, context)
+generated = question_generator.generate(answer, context)
 answer, question = generated.split('<sep>')
 show_result(generated, real_answer, context)
 
@@ -33,4 +41,6 @@ show_result(generated, real_answer, context)
 distractor_generator = DistractorGenerator()
 distractors = distractor_generator.generate(1, answer, question, context)
 
+print('Distractors')
 print(distractors)
+print('----')
