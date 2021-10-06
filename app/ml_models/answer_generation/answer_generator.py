@@ -67,7 +67,7 @@ class AnswerGenerator():
         self.ag_model.freeze()
         self.ag_model.eval()
 
-    def generate(self, context: str) -> str:
+    def _model_predict(self, context: str, generate_count: int) -> str:
         source_encoding = self.tokenizer(
             context,
             max_length=SOURCE_MAX_TOKEN_LEN,
@@ -81,7 +81,8 @@ class AnswerGenerator():
         generated_ids = self.ag_model.model.generate(
             input_ids=source_encoding['input_ids'],
             attention_mask=source_encoding['attention_mask'],
-            num_beams=1,
+            num_beams=generate_count,
+            num_return_sequences=generate_count,
             max_length=TARGET_MAX_TOKEN_LEN,
             repetition_penalty=2.5,
             length_penalty=1.0,
@@ -90,8 +91,15 @@ class AnswerGenerator():
         )
 
         preds = {
-            self.tokenizer.decode(generated_id, skip_special_tokens=True, clean_up_tokenization_spaces=True)
+            self.tokenizer.decode(generated_id, skip_special_tokens=False, clean_up_tokenization_spaces=True)
             for generated_id in generated_ids
         }
 
         return ''.join(preds)
+
+    def generate(self, context: str, generate_count: int) -> List[str]:
+        model_output = self._model_predict(context, generate_count)
+
+        answers = model_output.replace('<pad>', '').split('</s>')[:-1]
+
+        return answers

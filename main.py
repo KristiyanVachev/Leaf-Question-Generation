@@ -4,6 +4,8 @@ from app.ml_models.answer_generation.answer_generator import AnswerGenerator
 from app.ml_models.distractor_generation.distractor_generator import DistractorGenerator
 from app.ml_models.question_generation.question_generator import QuestionGenerator
 
+from app.mcq_generation import *
+
 def show_result(generated: str, answer: str, context:str, original_question: str = ''):
     
     print('Context:')
@@ -25,22 +27,25 @@ real_answer = 'Koala'
 input_answer = '[MASK]'
 
 # Answers
-answer_generator = AnswerGenerator()
-answer = answer_generator.generate(context)
-print('Answer:')
-print(answer)
-print('-----')
+# answer_generator = AnswerGenerator()
+# answer = answer_generator.generate(context)
+# print('Answer:')
+# print(answer)
+# print('-----')
 
-# Questions
-question_generator = QuestionGenerator()
-generated = question_generator.generate(answer, context)
-answer, question = generated.split('<sep>')
-show_result(generated, real_answer, context)
+# # Questions
+# question_generator = QuestionGenerator()
+# generated = question_generator.generate(answer, context)
+# answer, question = generated.split('<sep>')
+# show_result(generated, real_answer, context)
 
-# Distractors
-distractor_generator = DistractorGenerator()
-distractors = distractor_generator.generate(1, answer, question, context)
+# # Distractors
+# distractor_generator = DistractorGenerator()
+# distractors = distractor_generator.generate(1, answer, question, context)
 
-print('Distractors')
-print(distractors)
-print('----')
+# print('Distractors')
+# print(distractors)
+# print('----')
+
+generate(context, 4)
+
