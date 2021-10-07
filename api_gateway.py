@@ -1,9 +1,10 @@
+import contextlib
 from flask import Flask, request
 from flask_cors import CORS, cross_origin
 import json
 
 from app.models.question import Question
-from app.ml_models.question_generation.question_generator import QuestionGenerator
+from app.mcq_generation import *
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -24,27 +25,12 @@ def generate():
 
     requestJson = json.loads(request.data)
     text = requestJson['text']
-    title = requestJson['title']    
-
-    if requestJson['count'] == '':
-        count = 20
-    else:
-        count = int(requestJson['count'])
-
-    question_generator = QuestionGenerator()
-    input_answer = '[MASK]'
-    generated = question_generator.generate(input_answer, text)
-
-    answer, question = generated.split('<sep>')
-
-    questions = [
-        Question(answer, question, [])
-        ]
-
+    count = 10 if requestJson['count'] == '' else int(requestJson['count'])
+    
+    questions = generate_mcq_questions(text, count)
     result = list(map(lambda x: json.dumps(x.__dict__), questions))
 
     return json.dumps(result)
-    # return json.dumps(questions)
 
 
 if __name__ == '__main__':

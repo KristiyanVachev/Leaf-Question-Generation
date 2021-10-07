@@ -4,15 +4,13 @@ from app.ml_models.distractor_generation.distractor_generator import DistractorG
 from app.ml_models.question_generation.question_generator import QuestionGenerator
 from app.models.question import Question
 
-#TODO: Call the neeeded ml models to generate the desired count of multiple choice quesitons. Currently using 3 different ML models, but later it could be only 1. 
-
-def generate(context: str, desired_count: int) -> List[Question]:
+def generate_mcq_questions(context: str, desired_count: int) -> List[Question]:
     #TODO Clean the text
 
     questions = _generate_answers(context, desired_count)
     questions = _generate_questions(context, questions)
     questions = _generate_distractors(context, questions)
-    
+
     for question in questions:
         print('-------------------')
         print(question.answerText)
@@ -24,7 +22,7 @@ def generate(context: str, desired_count: int) -> List[Question]:
 def _generate_answers(context: str, desired_count: int) -> List[Question]:
     answer_generator = AnswerGenerator()
 
-    answers = answer_generator.generate(context, 4)
+    answers = answer_generator.generate(context, desired_count)
 
     #TODO: remove duplicate answers 
 
