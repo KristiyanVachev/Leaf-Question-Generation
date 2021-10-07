@@ -1,16 +1,19 @@
 from typing import List
+
+from app.modules.text_cleaning import clean_text
 from app.ml_models.answer_generation.answer_generator import AnswerGenerator
 from app.ml_models.distractor_generation.distractor_generator import DistractorGenerator
 from app.ml_models.question_generation.question_generator import QuestionGenerator
 from app.models.question import Question
 
+
 def generate_mcq_questions(context: str, desired_count: int) -> List[Question]:
-    #TODO Clean the text
+    cleaned_text =  clean_text(context)
 
-    questions = _generate_answers(context, desired_count)
-    questions = _generate_questions(context, questions)
-    questions = _generate_distractors(context, questions)
-
+    questions = _generate_answers(cleaned_text, desired_count)
+    questions = _generate_questions(cleaned_text, questions)
+    questions = _generate_distractors(cleaned_text, questions)
+    
     for question in questions:
         print('-------------------')
         print(question.answerText)
