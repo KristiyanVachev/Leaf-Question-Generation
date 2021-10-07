@@ -1,5 +1,6 @@
 from typing import List
 
+from app.modules.duplicate_removal import remove_duplicates
 from app.modules.text_cleaning import clean_text
 from app.ml_models.answer_generation.answer_generator import AnswerGenerator
 from app.ml_models.distractor_generation.distractor_generator import DistractorGenerator
@@ -26,11 +27,10 @@ def _generate_answers(context: str, desired_count: int) -> List[Question]:
     answer_generator = AnswerGenerator()
 
     answers = answer_generator.generate(context, desired_count)
-
-    #TODO: remove duplicate answers 
+    unique_answers = remove_duplicates(answers)
 
     questions = []
-    for answer in answers:
+    for answer in unique_answers:
         questions.append(Question(answer))
 
     return questions
@@ -47,6 +47,9 @@ def _generate_distractors(context: str, questions: List[Question]) -> List[Quest
     distractor_generator = DistractorGenerator()
 
     for question in questions:
-        question.distractors = distractor_generator.generate(5, question.answerText, question.questionText, context)
+        distractors =  distractor_generator.generate(5, question.answerText, question.questionText, context)
+        unique_distractors = remove_duplicates(distractors)
+
+        question.distractors = unique_distractors
 
     return questions
