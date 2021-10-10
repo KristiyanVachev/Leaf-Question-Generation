@@ -5,6 +5,7 @@ from tqdm.notebook import tqdm
 import json
 import pandas as pd
 import numpy as np
+import string
 
 import torch
 from pathlib import Path
@@ -87,6 +88,7 @@ class DistractorGenerator():
         cleaned_result = model_output.replace('<pad>', '').replace('</s>', '')
         cleaned_result = self._replace_all_extra_id(cleaned_result)
         distractors = cleaned_result.split('<sep>')
+        distractors = [x.translate(str.maketrans('', '', string.punctuation)) for x in distractors]
 
         return distractors
 
