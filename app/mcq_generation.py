@@ -1,6 +1,7 @@
+from platform import dist
 from typing import List
 
-from app.modules.duplicate_removal import remove_distractors_duplicate_with_correct_answer, remove_duplicates
+from app.modules.duplicate_removal import remove_distractors_duplicate_with_correct_answer, remove_duplicates, get_most_distinct_from_key
 from app.modules.text_cleaning import clean_text
 from app.ml_models.answer_generation.answer_generator import AnswerGenerator
 from app.ml_models.distractor_generation.distractor_generator import DistractorGenerator
@@ -63,7 +64,6 @@ class MCQGenerator():
 
             distractors = remove_duplicates(distractors)
             distractors = remove_distractors_duplicate_with_correct_answer(question.answerText, distractors)
-            #TODO rate the distractors by BLEU similarity to correct answer and take the most unsimilar 
 
             question.distractors = distractors
 

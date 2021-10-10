@@ -79,7 +79,10 @@ class DistractorGenerator():
         self.dg_model.eval()
 
     def generate(self, generate_count: int, correct: str, question: str, context: str) -> List[str]:
-        model_output = self._model_predict(1, correct, question, context)
+        
+        generate_triples = int(generate_count / 3) + 1 #since this model generates 3 distractors per generation
+        
+        model_output = self._model_predict(generate_triples, correct, question, context)
 
         cleaned_result = model_output.replace('<pad>', '').replace('</s>', '')
         cleaned_result = self._replace_all_extra_id(cleaned_result)
