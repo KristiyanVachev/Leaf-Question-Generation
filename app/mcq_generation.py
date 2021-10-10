@@ -7,49 +7,59 @@ from app.ml_models.distractor_generation.distractor_generator import DistractorG
 from app.ml_models.question_generation.question_generator import QuestionGenerator
 from app.models.question import Question
 
+import time
 
-def generate_mcq_questions(context: str, desired_count: int) -> List[Question]:
-    cleaned_text =  clean_text(context)
 
-    questions = _generate_answers(cleaned_text, desired_count)
-    questions = _generate_questions(cleaned_text, questions)
-    questions = _generate_distractors(cleaned_text, questions)
-    
-    for question in questions:
-        print('-------------------')
-        print(question.answerText)
-        print(question.questionText)
-        print(question.distractors)
+class MCQGenerator():
+    def __init__(self, is_verbose=False):
+        start_time = time.perf_counter()
+        print('Loading ML Models...')
 
-    return questions
+        self.answer_generator = AnswerGenerator()
+        print('Loaded AnswerGenerator in', round(time.perf_counter() - start_time, 2), 'seconds.') if is_verbose else ''
 
-def _generate_answers(context: str, desired_count: int) -> List[Question]:
-    answer_generator = AnswerGenerator()
+        self.question_generator = QuestionGenerator()
+        print('Loaded QuestionGenerator in', round(time.perf_counter() - start_time, 2), 'seconds.') if is_verbose else ''
 
-    answers = answer_generator.generate(context, desired_count)
-    unique_answers = remove_duplicates(answers)
+        self.distractor_generator = DistractorGenerator()
+        print('Loaded DistractorGenerator in', round(time.perf_counter() - start_time, 2), 'seconds.') if is_verbose else ''
 
-    questions = []
-    for answer in unique_answers:
-        questions.append(Question(answer))
+    def generate_mcq_questions(self, context: str, desired_count: int) -> List[Question]:
+        cleaned_text =  clean_text(context)
 
-    return questions
+        questions = self._generate_answers(cleaned_text, desired_count)
+        questions = self._generate_questions(cleaned_text, questions)
+        questions = self._generate_distractors(cleaned_text, questions)
+        
+        for question in questions:
+            print('-------------------')
+            print(question.answerText)
+            print(question.questionText)
+            print(question.distractors)
 
-def _generate_questions(context: str, questions: List[Question]) -> List[Question]:
-    question_generator = QuestionGenerator()
+        return questions
 
-    for question in questions:
-        question.questionText = question_generator.generate(question.answerText, context)
+    def _generate_answers(self, context: str, desired_count: int) -> List[Question]:
+        answers = self.answer_generator.generate(context, desired_count)
+        unique_answers = remove_duplicates(answers)
 
-    return questions
+        questions = []
+        for answer in unique_answers:
+            questions.append(Question(answer))
 
-def _generate_distractors(context: str, questions: List[Question]) -> List[Question]:
-    distractor_generator = DistractorGenerator()
+        return questions
 
-    for question in questions:
-        distractors =  distractor_generator.generate(5, question.answerText, question.questionText, context)
-        unique_distractors = remove_duplicates(distractors)
+    def _generate_questions(self, context: str, questions: List[Question]) -> List[Question]:
+        for question in questions:
+            question.questionText = self.question_generator.generate(question.answerText, context)
 
-        question.distractors = unique_distractors
+        return questions
 
-    return questions
+    def _generate_distractors(self, context: str, questions: List[Question]) -> List[Question]:
+        for question in questions:
+            distractors =  self.distractor_generator.generate(5, question.answerText, question.questionText, context)
+            unique_distractors = remove_duplicates(distractors)
+
+            question.distractors = unique_distractors
+
+        return questions
