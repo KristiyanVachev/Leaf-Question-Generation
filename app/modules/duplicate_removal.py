@@ -1,3 +1,4 @@
+from platform import dist
 from typing import List
 import string
 import re
@@ -14,6 +15,13 @@ def remove_duplicates(items: List[str]) -> List[str]:
             normalized_unique_items.append(normalized_item)
 
     return unique_items
+
+def remove_distractors_duplicate_with_correct_answer(correct: str, distractors: List[str]):
+    for distractor in distractors:
+        if _normalize_item(correct) == _normalize_item(distractor):
+            distractors.remove(distractor)
+    
+    return distractors
 
 '''
 Code from: https://github.com/allenai/bi-att-flow/blob/master/squad/evaluate-v1.1.py
@@ -34,3 +42,5 @@ def _normalize_item(item) -> str:
         return text.lower()
 
     return white_space_fix(remove_articles(remove_punc(lower(item))))
+
+
