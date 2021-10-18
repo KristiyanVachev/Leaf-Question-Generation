@@ -2,7 +2,6 @@ from logging import NullHandler
 from typing import List, Dict, Tuple
 import tqdm.notebook as tq
 from tqdm.notebook import tqdm
-import json
 import pandas as pd
 import numpy as np
 
@@ -84,6 +83,14 @@ class QuestionGenerator():
         generated_answer, generated_question = model_output.split('<sep>')
 
         return generated_question
+
+    def generate_qna(self, context: str) -> Tuple[str, str]:
+        answer_mask = '[MASK]'
+        model_output = self._model_predict(answer_mask, context)
+
+        generated_answer, generated_question = model_output.split('<sep>')
+
+        return generated_answer, generated_question
 
     def _model_predict(self, answer: str, context: str) -> str:
         source_encoding = self.tokenizer(
