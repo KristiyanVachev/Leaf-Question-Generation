@@ -33,4 +33,4 @@ Oxygen was isolated by Michael Sendivogius before 1604, but it is commonly belie
 
 Common uses of oxygen include production of steel, plastics and textiles, brazing, welding and cutting of steels and other metals, rocket propellant, oxygen therapy, and life support systems in aircraft, submarines, spaceflight and diving.'''
 
-MCQ_Generator.generate_mcq_questions(context_oxygen, 5)
+MCQ_Generator.generate_mcq_questions(context_oxygen, 10)
