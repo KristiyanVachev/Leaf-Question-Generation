@@ -1,4 +1,3 @@
-from platform import dist
 from typing import List
 from nltk.tokenize import sent_tokenize
 import toolz
@@ -8,6 +7,7 @@ from app.modules.text_cleaning import clean_text
 from app.ml_models.answer_generation.answer_generator import AnswerGenerator
 from app.ml_models.distractor_generation.distractor_generator import DistractorGenerator
 from app.ml_models.question_generation.question_generator import QuestionGenerator
+from app.ml_models.sense2vec_distractor_generation.sense2vec_generation import Sense2VecDistractorGeneration
 from app.models.question import Question
 
 import time
@@ -27,6 +27,9 @@ class MCQGenerator():
 
         self.distractor_generator = DistractorGenerator()
         print('Loaded DistractorGenerator in', round(time.perf_counter() - start_time, 2), 'seconds.') if is_verbose else ''
+
+        self.sense2vec_distractor_generator = Sense2VecDistractorGeneration()
+        print('Loaded Sense2VecDistractorGenerator in', round(time.perf_counter() - start_time, 2), 'seconds.') if is_verbose else ''
 
     # Main function
     def generate_mcq_questions(self, context: str, desired_count: int) -> List[Question]:
@@ -69,7 +72,7 @@ class MCQGenerator():
 
         for split in context_splits:
             answer, question = self.question_generator.generate_qna(split)
-            questions.append(Question(answer, question))
+            questions.append(Question(answer.capitalize(), question))
 
         questions = list(toolz.unique(questions, key=lambda x: x.answerText))
 
@@ -77,10 +80,14 @@ class MCQGenerator():
 
     def _generate_distractors(self, context: str, questions: List[Question]) -> List[Question]:
         for question in questions:
-            distractors =  self.distractor_generator.generate(5, question.answerText, question.questionText, context)
+            t5_distractors =  self.distractor_generator.generate(5, question.answerText, question.questionText, context)
+            s2v_distractors = self.sense2vec_distractor_generator.generate(question.answerText, 3)
+
+            distractors = t5_distractors + s2v_distractors
 
             distractors = remove_duplicates(distractors)
             distractors = remove_distractors_duplicate_with_correct_answer(question.answerText, distractors)
+            #TODO - filter distractors having a similar bleu score with another distractor
 
             question.distractors = distractors
 

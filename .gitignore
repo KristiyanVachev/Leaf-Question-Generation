@@ -5,6 +5,7 @@
 app/ml_models/answer_generation/checkpoints
 app/ml_models/question_generation/checkpoints
 app/ml_models/distractor_generation/checkpoints
+app/ml_models/sense2vec_distractor_generation/data
 
 __pycache__
 

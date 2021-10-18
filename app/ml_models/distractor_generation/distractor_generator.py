@@ -89,6 +89,7 @@ class DistractorGenerator():
         cleaned_result = self._replace_all_extra_id(cleaned_result)
         distractors = cleaned_result.split('<sep>')[:-1]
         distractors = [x.translate(str.maketrans('', '', string.punctuation)) for x in distractors]
+        distractors = list(map(lambda x: x.strip(), distractors))
 
         return distractors
 
