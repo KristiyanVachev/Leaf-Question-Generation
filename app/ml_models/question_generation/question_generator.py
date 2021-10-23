@@ -88,7 +88,14 @@ class QuestionGenerator():
         answer_mask = '[MASK]'
         model_output = self._model_predict(answer_mask, context)
 
-        generated_answer, generated_question = model_output.split('<sep>')
+        qna_pair = model_output.split('<sep>')
+
+        if len(qna_pair) < 2:
+            generated_answer = ''
+            generated_question = qna_pair[0]
+        else:
+            generated_answer = qna_pair[0]
+            generated_question = qna_pair[1]
 
         return generated_answer, generated_question
 
