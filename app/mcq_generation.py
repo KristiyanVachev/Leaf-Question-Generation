@@ -81,9 +81,13 @@ class MCQGenerator():
     def _generate_distractors(self, context: str, questions: List[Question]) -> List[Question]:
         for question in questions:
             t5_distractors =  self.distractor_generator.generate(5, question.answerText, question.questionText, context)
-            s2v_distractors = self.sense2vec_distractor_generator.generate(question.answerText, 3)
 
-            distractors = t5_distractors + s2v_distractors
+            if len(t5_distractors) < 3:
+                s2v_distractors = self.sense2vec_distractor_generator.generate(question.answerText, 3)
+                distractors = t5_distractors + s2v_distractors
+            else:
+                distractors = t5_distractors
+
 
             distractors = remove_duplicates(distractors)
             distractors = remove_distractors_duplicate_with_correct_answer(question.answerText, distractors)
