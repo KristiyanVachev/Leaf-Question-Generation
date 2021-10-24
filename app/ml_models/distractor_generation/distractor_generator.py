@@ -74,7 +74,7 @@ class DistractorGenerator():
         # print('tokenizer len after: ', len(self.tokenizer))
         self.tokenizer_len = len(self.tokenizer)
 
-        checkpoint_path = 'app/ml_models/distractor_generation/checkpoints/10.2.0-distractors-no-mask.ckpt'
+        checkpoint_path = 'app/ml_models/distractor_generation/models/race-distractors.ckpt'
         self.dg_model = QGModel.load_from_checkpoint(checkpoint_path)
         self.dg_model.freeze()
         self.dg_model.eval()
@@ -123,7 +123,7 @@ class DistractorGenerator():
 
         return ''.join(preds)
 
-    def _fucking_correct_index_of(self, text:str, substring: str, start_index: int = 0):
+    def _correct_index_of(self, text:str, substring: str, start_index: int = 0):
         try:
             index = text.index(substring, start_index)
         except ValueError:
@@ -135,9 +135,9 @@ class DistractorGenerator():
         new_text = text
         start_index_of_extra_id = 0
 
-        while (self._fucking_correct_index_of(new_text, '<extra_id_') >= 0):
-            start_index_of_extra_id = self._fucking_correct_index_of(new_text, '<extra_id_', start_index_of_extra_id)
-            end_index_of_extra_id = self._fucking_correct_index_of(new_text, '>', start_index_of_extra_id)
+        while (self._correct_index_of(new_text, '<extra_id_') >= 0):
+            start_index_of_extra_id = self._correct_index_of(new_text, '<extra_id_', start_index_of_extra_id)
+            end_index_of_extra_id = self._correct_index_of(new_text, '>', start_index_of_extra_id)
 
             new_text = new_text[:start_index_of_extra_id] + '<sep>' + new_text[end_index_of_extra_id + 1:]
 

@@ -62,7 +62,7 @@ class AnswerGenerator():
     def __init__(self):
         self.tokenizer = T5Tokenizer.from_pretrained(MODEL_NAME)
 
-        checkpoint_path = 'app/ml_models/answer_generation/checkpoints/7.1-answers-only.ckpt'
+        checkpoint_path = 'app/ml_models/answer_generation/models/squad-answer-generation.ckpt'
         self.ag_model = QGModel.load_from_checkpoint(checkpoint_path)
         self.ag_model.freeze()
         self.ag_model.eval()
