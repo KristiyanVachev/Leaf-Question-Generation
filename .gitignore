@@ -2,10 +2,10 @@
 
 /venv
 
-app/ml_models/answer_generation/models
-app/ml_models/question_generation/models
-app/ml_models/distractor_generation/models
-app/ml_models/sense2vec_distractor_generation/data
+app/ml_models/answer_generation/models/squad-answer-generation.ckpt
+app/ml_models/question_generation/models/multitask-qg-ag.ckpt
+app/ml_models/distractor_generation/models/race-distractors.ckpt
+app/ml_models/sense2vec_distractor_generation/data/s2v_old
 
 __pycache__
 
