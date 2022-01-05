@@ -13,7 +13,9 @@ Originally inspired by a Bachelor's machine learning course ([github link](https
 This work has been accepted as a demo paper for the [ECIR 2022 conference.](https://ecir2022.org/) 
 
 **Video demonstration:** [here](https://www.youtube.com/watch?v=tpxl-UnfmQc)
+
 **Live demo:** *coming soon*
+
 **Paper:** *will be uploaded before the conference - 14th April 2022*
 
 *Abstract:*
