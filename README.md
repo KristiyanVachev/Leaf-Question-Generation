@@ -16,7 +16,7 @@ This work has been accepted as a demo paper for the [ECIR 2022 conference.](http
 
 **Live demo:** *coming soon*
 
-**Paper:** *will be uploaded before the conference - 14th April 2022*
+**Paper:** [here](https://arxiv.org/abs/2201.09012)
 
 *Abstract:*
 Testing with quiz questions has proven to be an effective strategy for better educational processes. However, manually creating quizzes is a tedious and time-consuming task.  To address this challenge, we present Leaf, a system for generating multiple-choice questions from factual text. In addition to being very well suited for classroom settings, Leaf could be also used in an industrial setup, e.g., to facilitate onboarding and knowledge sharing, or as a component of chatbots, question answering systems, or Massive Open Online Courses (MOOCs).
